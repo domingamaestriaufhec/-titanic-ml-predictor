@@ -1,0 +1,505 @@
+/* ==========================================================================
+   TITANIC SURVIVAL PREDICTOR — style.css
+   Rediseño Premium y Creativo (Tema Holográfico + Simulador de Cubierta)
+   ========================================================================== */
+
+:root {
+    --bg-dark: #05070f;
+    --bg-card: rgba(13, 19, 41, 0.45);
+    --border-color: rgba(255, 255, 255, 0.05);
+    --border-glow: rgba(6, 182, 212, 0.25);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    
+    --accent-purple: #8b5cf6;
+    --accent-cyan: #06b6d4;
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    
+    --glow-purple: rgba(139, 92, 246, 0.35);
+    --glow-cyan: rgba(6, 182, 212, 0.35);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Background Animated Orbs */
+.bg-orbs {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: 0.15;
+    animation: floatOrb 12s ease-in-out infinite alternate;
+}
+
+.orb-purple { width: 500px; height: 500px; background: var(--accent-purple); top: -150px; left: -150px; }
+.orb-cyan { width: 600px; height: 600px; background: var(--accent-cyan); bottom: -200px; right: -150px; animation-delay: -6s; }
+
+@keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, -50px) scale(1.1); }
+}
+
+/* Header */
+.app-header {
+    background: rgba(5, 7, 15, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.brand-symbol {
+    font-size: 24px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.brand-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+}
+
+.brand-highlight { color: var(--accent-cyan); }
+.header-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.main-container {
+    max-width: 1300px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 24px;
+    flex-grow: 1;
+}
+
+/* Simulation Section Grid (3 Columns for rich layout) */
+.simulation-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+@media (max-width: 1100px) {
+    .simulation-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .result-column {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .simulation-grid {
+        grid-template-columns: 1fr;
+    }
+    .result-column {
+        grid-column: span 1;
+    }
+}
+
+/* Glassmorphism Card Base */
+.glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.glass-card:hover {
+    border-color: var(--border-glow);
+    box-shadow: 0 10px 45px rgba(6, 182, 212, 0.08);
+}
+
+.card-header {
+    margin-bottom: 20px;
+}
+
+.card-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-icon { color: var(--accent-cyan); }
+.card-header p { font-size: 13px; color: var(--text-muted); }
+
+/* Inputs styling */
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Radio Toggles */
+.radio-toggle {
+    display: flex;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    padding: 3px;
+}
+
+.radio-toggle input[type="radio"] { display: none; }
+.radio-toggle label {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.radio-toggle input[type="radio"]:checked + label {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    color: white;
+}
+
+/* Custom Sliders */
+.slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.value-display {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.06);
+    outline: none;
+    margin: 8px 0;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text-main);
+    cursor: pointer;
+    border: 2px solid var(--accent-cyan);
+}
+
+/* Visual Ticket - Boarding Pass */
+.boarding-pass {
+    background: radial-gradient(circle at 0px 50px, transparent 12px, rgba(255,255,255,0.02) 13px),
+                radial-gradient(circle at 100% 50px, transparent 12px, rgba(255,255,255,0.02) 13px);
+    background-color: rgba(13, 19, 41, 0.7);
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    margin-bottom: 24px;
+}
+
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+}
+
+.ticket-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    letter-spacing: 1px;
+}
+
+.ticket-avatar {
+    font-size: 32px;
+    text-align: center;
+}
+
+.ticket-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.ticket-item span {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.ticket-item strong {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+/* Ship Visual Map style */
+.ship-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.ship-deck {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.deck-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.deck-name { font-weight: 700; }
+.deck-desc { font-size: 10px; color: var(--text-muted); }
+
+.deck-indicator {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Active deck highlight classes */
+.deck-first.active-deck {
+    border-color: var(--accent-green);
+    background: rgba(16, 185, 129, 0.05);
+}
+.deck-first.active-deck .deck-indicator {
+    background: var(--accent-green);
+    box-shadow: 0 0 10px var(--accent-green);
+}
+
+.deck-second.active-deck {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.05);
+}
+.deck-second.active-deck .deck-indicator {
+    background: #f59e0b;
+    box-shadow: 0 0 10px #f59e0b;
+}
+
+.deck-third.active-deck {
+    border-color: var(--accent-red);
+    background: rgba(239, 68, 68, 0.05);
+}
+.deck-third.active-deck .deck-indicator {
+    background: var(--accent-red);
+    box-shadow: 0 0 10px var(--accent-red);
+}
+
+/* Results visualization column */
+.gauge-container {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 16px;
+}
+
+.gauge { transform: rotate(-90deg); }
+.gauge-bg { fill: none; stroke: rgba(255, 255, 255, 0.03); stroke-width: 12; }
+.gauge-fill {
+    fill: none;
+    stroke: var(--accent-cyan);
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gauge-content {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.prob-num {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.prob-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.outcome-badge {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    padding: 6px 20px;
+    border-radius: 50px;
+    text-align: center;
+    margin: 0 auto 16px;
+    width: fit-content;
+}
+
+.outcome-survives { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); }
+.outcome-dies { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); color: var(--accent-red); }
+
+.prediction-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+/* Interactive Survivor Factor Force Meters */
+.factor-meters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.factor-meters h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meter-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.meter-header strong { color: var(--text-main); }
+
+.meter-bar-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.meter-bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+/* Footer */
+.app-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 20px 0;
+    margin-top: 32px;
+}
+
+.footer-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-muted);
+}

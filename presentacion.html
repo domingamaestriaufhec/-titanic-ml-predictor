@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación Proyecto Final — Titanic AI — Dominga Rodríguez</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #05070f;
+            --bg-card: rgba(13, 19, 41, 0.65);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(6, 182, 212, 0.35);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Background Orbs */
+        .bg-orbs {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.15;
+            animation: floatOrb 12s ease-in-out infinite alternate;
+        }
+
+        .orb-1 { width: 500px; height: 500px; background: var(--accent-cyan); top: -100px; left: -100px; }
+        .orb-2 { width: 500px; height: 500px; background: var(--accent-purple); bottom: -100px; right: -100px; animation-delay: -6s; }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, -40px) scale(1.05); }
+        }
+
+        /* Slides Deck Container */
+        .deck {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: translateX(60px);
+            padding: 60px;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(0);
+        }
+
+        .slide.exit {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        /* Content Container */
+        .slide-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 900px;
+            height: 100%;
+            max-height: 520px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            backdrop-filter: blur(20px);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 12px;
+        }
+
+        .slide-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slide-body {
+            flex-grow: 1;
+            font-size: 17px;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Diapositiva Portada */
+        .cover-content {
+            text-align: center;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cover-badge {
+            background: rgba(6, 182, 212, 0.08);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: var(--accent-cyan);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .cover-title {
+            font-size: 54px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        .cover-sub {
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .cover-author {
+            font-size: 14px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 16px;
+            width: 100%;
+        }
+
+        /* Navigation controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+            background: rgba(5, 7, 15, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .slide-num {
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Custom grids/bullets for content */
+        .bullets {
+            list-style-type: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bullets li {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .bullets li::before {
+            content: "◆";
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+            font-size: 14px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .metric-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .metric-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            margin: 6px 0;
+        }
+
+        .metric-label { font-size: 11px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="deck">
+        <!-- Slide 1: Cover -->
+        <section class="slide active">
+            <div class="slide-content cover-content">
+                <span class="cover-badge">Proyecto Final — Aprendizaje Autónomo</span>
+                <h1 class="cover-title">Predictor de Supervivencia<br><span style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">RMS Titanic</span></h1>
+                <p class="cover-sub">Modelado de Clasificación Supervisada y Despliegue de Inferencia</p>
+                <div class="cover-author">
+                    <p><strong>Autora:</strong> Dominga Rodríguez</p>
+                    <p>Maestría en Inteligencia Artificial y Aprendizaje Automático — UFHEC</p>
+                    <p>Año: 2026</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 2: Contexto -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2 class="slide-title">01. Introducción y Problema</h2>
+                </div>
+                <div class="slide-body">
+                    <p style="margin-bottom: 20px;">
+                        El naufragio del RMS Titanic en 1912 es uno de los mayores desastres marítimos de la historia. De las 2,224 personas a bordo, más de 1,500 perdieron la vida.
+                    </p>
+                    <ul class="bullets">
+                        <li><strong>Dato Histórico:</strong> La supervivencia no fue aleatoria; dependió fuertemente de factores demográficos y estatus socioeconómico.</li>
+                        <li><strong>Pregunta de Investigación:</strong> ¿Es posible predecir binariamente si un pasajero sobrevivirá según su clase de boleto, género, edad y grupo familiar?</li>
+                        <li><strong>Objetivo:</strong> Diseñar y validar cuatro clasificadores supervisados, extrayendo la fórmula óptima para desplegar en cliente web interactivo.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Metodología -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2 class="slide-title">02. Ciclo de Vida CRISP-ML(Q)</h2>
+                </div>
+                <div class="slide-body">
+                    <p style="margin-bottom: 16px;">La organización del proyecto sigue las fases metodológicas de la gestión de calidad en IA:</p>
+                    <ul class="bullets">
+                        <li><strong>1. Entendimiento del Negocio:</strong> Planteamiento de hipótesis y preguntas de investigación.</li>
+                        <li><strong>2. Entendimiento de Datos:</strong> Auditoría estadística del manifiesto de 891 registros (`titanic.csv`).</li>
+                        <li><strong>3. Preparación de Datos (ETL):</strong> Imputación de edad basada en agrupaciones, normalización e ingeniería de variables.</li>
+                        <li><strong>4. Modelado:</strong> Ajuste de los clasificadores clásico lineales y basados en árboles.</li>
+                        <li><strong>5. Evaluación:</strong> Análisis cuantitativo con matrices de confusión y curvas ROC.</li>
+                        <li><strong>6. Despliegue:</strong> Creación de simuladores web cliente local e interactivos en la nube.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: EDA -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2 class="slide-title">03. Análisis Exploratorio de Datos (EDA)</h2>
+                </div>
+                <div class="slide-body">
+                    <p style="margin-bottom: 16px;">Principales hallazgos estadísticos y correlaciones halladas en los datos originales:</p>
+                    <ul class="bullets">
+                        <li><strong>Efecto Género:</strong> El 74.2% de las mujeres a bordo sobrevivió en comparación con el 18.9% de los hombres, validando el protocolo de evacuación "mujeres y niños primero".</li>
+                        <li><strong>Efecto Clase Socioeconómica:</strong> La primera clase obtuvo un 63.0% de supervivencia, mientras que la tercera clase apenas alcanzó el 24.2%.</li>
+                        <li><strong>Correlaciones Clave:</strong> La tarifa pagada (`Fare`) tiene una correlación directa positiva fuerte con la probabilidad de supervivencia, mientras que ser hombre (`Sex=1`) tiene correlación negativa extrema.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: ETL -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2 class="slide-title">04. Preparación de Datos e Ingeniería</h2>
+                </div>
+                <div class="slide-body">
+                    <p style="margin-bottom: 16px;">Transformaciones del flujo ETL previas al entrenamiento:</p>
+                    <ul class="bullets">
+                        <li><strong>Imputación Inteligente:</strong> Se reemplazaron nulos de `Age` utilizando la mediana agrupada por `Pclass` y `Sex` para no distorsionar la distribución etaria.</li>
+                        <li><strong>Ingeniería de Características:</strong>
+                            <ul>
+                                <li>`FamilySize` = `SibSp` + `Parch` + 1 (tamaño del grupo familiar).</li>
+                                <li>`IsAlone` = indicador binario (1 si viaja solo, 0 en caso contrario).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Escalamiento Estándar:</strong> Las variables continuas (`Age` y `Fare`) fueron estandarizadas con media cero y desviación estándar uno para mejorar la convergencia del optimizador.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Modelos -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2 class="slide-title">05. Modelos de Clasificación Entrenados</h2>
+                </div>
+                <div class="slide-body">
+                    <p style="margin-bottom: 16px;">Se evaluaron cuatro arquitecturas clásicas de aprendizaje supervisado:</p>
+                    <ul class="bullets">
+                        <li><strong>Regresión Logística:</strong> Establece una ecuación lineal ponderada aplicando la función sigmoide en el plano probabilístico. Altamente interpretable.</li>
+                        <li><strong>Random Forest:</strong> Conjunto de árboles de decisión (Ensemble) que reduce la varianza y extrae la importancia de variables mediante entropía.</li>
+                        <li><strong>K-Vecinos Cercanos (KNN):</strong> Clasifica perfiles en base a la proximidad en el espacio multidimensional escalado.</li>
+                        <li><strong>Árbol de Decisión:</strong> Modelo jerárquico de ramificaciones secuenciales según ganancia de información.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Métricas -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2 class="slide-title">06. Resultados y Comparativa</h2>
+                </div>
+                <div class="slide-body">
+                    <p>Desempeño final de los clasificadores en el conjunto de prueba (30%):</p>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-title">Reg. Logística</div>
+                            <div class="metric-val">80.97%</div>
+                            <div class="metric-label">AUC: 0.855</div>
+                        </div>
+                        <div class="metric-card" style="border-color: var(--accent-purple);">
+                            <div class="metric-title">Random Forest</div>
+                            <div class="metric-val">80.22%</div>
+                            <div class="metric-label">AUC: 0.864</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-title">KNN</div>
+                            <div class="metric-val">79.10%</div>
+                            <div class="metric-label">AUC: 0.849</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-title">Árbol Decisión</div>
+                            <div class="metric-val">79.10%</div>
+                            <div class="metric-label">AUC: 0.850</div>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 20px; font-size: 14px; color: var(--text-muted);">
+                        *Nota: La Regresión Logística y Random Forest demostraron la mayor estabilidad. Los pesos de la Regresión Logística fueron extraídos para desplegar el motor JS.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: Despliegue -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2 class="slide-title">07. Despliegue de Inferencia y Dashboard</h2>
+                </div>
+                <div class="slide-body">
+                    <p style="margin-bottom: 16px;">Ecosistema desarrollado para la interacción del usuario:</p>
+                    <ul class="bullets">
+                        <li><strong>Simulador Web Client-Side (HTML5/CSS3/JS):</strong> Ejecuta el cálculo predictivo local instantáneo aplicando la sigmoide matemática sobre los controles de deslizamiento. Presenta pases de abordaje interactivos y un mapa de cubiertas de evacuación.</li>
+                        <li><strong>Dashboard en Streamlit:</strong> Entorno analítico avanzado para explorar el conjunto de datos limpio, visualizar el análisis de correlaciones e interactuar con los clasificadores directamente en Python.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: Conclusiones -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2 class="slide-title">08. Conclusiones y Consideraciones Éticas</h2>
+                </div>
+                <div class="slide-body">
+                    <ul class="bullets" style="gap: 16px;">
+                        <li><strong>Conclusión:</strong> El análisis confirma estadísticamente que las variables de estatus socioeconómico y género fueron determinantes absolutos para salvarse del desastre.</li>
+                        <li><strong>Sesgos y Consideraciones Éticas:</strong> Los modelos reflejan el sesgo histórico de evacuación. En sistemas modernos de IA, es crítico mitigar sesgos de género u origen socioeconómico para evitar discriminación algorítmica.</li>
+                        <li><strong>Acceso al Proyecto:</strong> Todo el código fuente, la documentación APA, el cuaderno de desarrollo y el simulador interactivo se encuentran integrados en la carpeta final y disponibles en GitHub.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prev-btn">◀</button>
+        <span class="slide-num" id="slide-number">1 / 9</span>
+        <button class="nav-btn" id="next-btn">▶</button>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideNumber = document.getElementById('slide-number');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('exit');
+            setTimeout((exitSlide) => {
+                exitSlide.classList.remove('exit');
+            }, 600, slides[currentSlide]);
+
+            currentSlide = (index + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            slideNumber.textContent = `${currentSlide + 1} / ${slides.length}`;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            showSlide(currentSlide - 1);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            showSlide(currentSlide + 1);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                showSlide(currentSlide + 1);
+            } else if (e.key === 'ArrowLeft') {
+                showSlide(currentSlide - 1);
+            }
+        });
+    </script>
+</body>
+</html>

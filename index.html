@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic Survival Predictor — Simulador Inteligente</title>
+    <meta name="description" content="Simulador predictivo de supervivencia en el RMS Titanic utilizando Regresión Logística y visualización interactiva de cubiertas y factores de supervivencia.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated background orbs -->
+    <div class="bg-orbs">
+        <div class="orb orb-purple"></div>
+        <div class="orb orb-cyan"></div>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="app-header">
+        <div class="nav-container">
+            <a href="../index.html" class="brand">
+                <span class="brand-symbol">◆</span>
+                <span class="brand-name">TITANIC <span class="brand-highlight">AI</span></span>
+            </a>
+            <div class="header-badge">Maestría IA — UFHEC</div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Simulation Grid (3 Columns) -->
+        <section class="simulation-grid">
+            
+            <!-- Column 1: Inputs and Sliders -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2><span class="header-icon">⚙</span> Parametrización</h2>
+                    <p>Ajusta el perfil del pasajero en tiempo real</p>
+                </div>
+                
+                <div class="form-grid">
+                    <!-- Sex Selection -->
+                    <div class="input-group">
+                        <label>Género (Sex)</label>
+                        <div class="radio-toggle">
+                            <input type="radio" id="sex-female" name="sex" value="0" checked>
+                            <label for="sex-female">Femenino</label>
+                            <input type="radio" id="sex-male" name="sex" value="1">
+                            <label for="sex-male">Masculino</label>
+                        </div>
+                    </div>
+
+                    <!-- Pclass Selection -->
+                    <div class="input-group">
+                        <label>Clase de Cabina (Pclass)</label>
+                        <div class="radio-toggle">
+                            <input type="radio" id="pclass-1" name="pclass" value="1">
+                            <label for="pclass-1">1ª Clase</label>
+                            <input type="radio" id="pclass-2" name="pclass" value="2">
+                            <label for="pclass-2">2ª</label>
+                            <input type="radio" id="pclass-3" name="pclass" value="3" checked>
+                            <label for="pclass-3">3ª</label>
+                        </div>
+                    </div>
+
+                    <!-- Age Slider -->
+                    <div class="input-group">
+                        <div class="slider-header">
+                            <label for="slider-age">Edad (Age)</label>
+                            <span class="value-display" id="val-age">25 años</span>
+                        </div>
+                        <input type="range" id="slider-age" min="0" max="80" value="25" class="slider">
+                    </div>
+
+                    <!-- Fare Slider -->
+                    <div class="input-group">
+                        <div class="slider-header">
+                            <label for="slider-fare">Precio del Boleto (Fare)</label>
+                            <span class="value-display" id="val-fare">£ 15.00</span>
+                        </div>
+                        <input type="range" id="slider-fare" min="0" max="512" step="0.5" value="15" class="slider">
+                    </div>
+
+                    <!-- SibSp Slider -->
+                    <div class="input-group">
+                        <div class="slider-header">
+                            <label for="slider-sibsp">Hermanos / Parejas (SibSp)</label>
+                            <span class="value-display" id="val-sibsp">0</span>
+                        </div>
+                        <input type="range" id="slider-sibsp" min="0" max="8" value="0" class="slider">
+                    </div>
+
+                    <!-- Parch Slider -->
+                    <div class="input-group">
+                        <div class="slider-header">
+                            <label for="slider-parch">Padres / Hijos (Parch)</label>
+                            <span class="value-display" id="val-parch">0</span>
+                        </div>
+                        <input type="range" id="slider-parch" min="0" max="6" value="0" class="slider">
+                    </div>
+
+                    <!-- Embarked Selection -->
+                    <div class="input-group">
+                        <label>Puerto de Embarque</label>
+                        <div class="radio-toggle">
+                            <input type="radio" id="emb-c" name="embarked" value="C">
+                            <label for="emb-c">Cherbourg</label>
+                            <input type="radio" id="emb-q" name="embarked" value="Q">
+                            <label for="emb-q">Queenstown</label>
+                            <input type="radio" id="emb-s" name="embarked" value="S" checked>
+                            <label for="emb-s">Southampton</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Boarding Pass & Ship Deck Evacuation Visual -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <h2><span class="header-icon">🎴</span> Pase de Abordaje</h2>
+                    <p>Visualización descriptiva del boleto e infraestructura</p>
+                </div>
+
+                <!-- Physical Boarding Pass style -->
+                <div class="boarding-pass">
+                    <div class="ticket-header">
+                        <span class="ticket-title">WHITE STAR LINE PASSENGER</span>
+                        <span class="value-display" style="font-size: 11px;">N° 349204</span>
+                    </div>
+                    <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 12px;">
+                        <div class="ticket-avatar" id="ticket-avatar">👨</div>
+                        <div class="ticket-item">
+                            <span>Pasajero Generado</span>
+                            <strong id="ticket-name">Adulto Masculino</strong>
+                        </div>
+                    </div>
+                    <div class="ticket-grid">
+                        <div class="ticket-item">
+                            <span>Clase</span>
+                            <strong id="ticket-class">3ª Clase</strong>
+                        </div>
+                        <div class="ticket-item">
+                            <span>Tarifa</span>
+                            <strong id="ticket-fare">£ 15.00</strong>
+                        </div>
+                        <div class="ticket-item">
+                            <span>Puerto</span>
+                            <strong id="ticket-embarked">Southampton</strong>
+                        </div>
+                        <div class="ticket-item">
+                            <span>Tamaño de Familia</span>
+                            <strong id="ticket-family">1 (Solo)</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ship Deck Map Visualizer -->
+                <div class="ship-visual">
+                    <div class="card-header" style="margin-bottom: 10px;">
+                        <h3 style="font-size: 13px; font-weight: 700;">Ubicación en las Cubiertas</h3>
+                    </div>
+                    <!-- Deck 1st -->
+                    <div class="ship-deck deck-first" id="deck-1">
+                        <div class="deck-info">
+                            <span class="deck-name">Cubierta Superior (1ª Clase)</span>
+                            <span class="deck-desc">Acceso directo a botes salvavidas</span>
+                        </div>
+                        <div class="deck-indicator"></div>
+                    </div>
+                    <!-- Deck 2nd -->
+                    <div class="ship-deck deck-second" id="deck-2">
+                        <div class="deck-info">
+                            <span class="deck-name">Cubierta Intermedia (2ª Clase)</span>
+                            <span class="deck-desc">Acceso moderado a botes</span>
+                        </div>
+                        <div class="deck-indicator"></div>
+                    </div>
+                    <!-- Deck 3rd -->
+                    <div class="ship-deck deck-third" id="deck-3">
+                        <div class="deck-info">
+                            <span class="deck-name">Cubierta Inferior (3ª Clase)</span>
+                            <span class="deck-desc">Compuertas y barreras de escape</span>
+                        </div>
+                        <div class="deck-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Gauge Predictor and Factor Meters -->
+            <div class="glass-card result-column">
+                <div class="card-header">
+                    <h2><span class="header-icon">✦</span> Inferencia ML</h2>
+                    <p>Ecuación logística evaluada en cliente</p>
+                </div>
+
+                <div class="result-visualization">
+                    <!-- Circular Gauge -->
+                    <div class="gauge-container">
+                        <svg class="gauge" width="180" height="180" viewBox="0 0 180 180">
+                            <circle class="gauge-bg" cx="90" cy="90" r="76" />
+                            <circle class="gauge-fill" id="progress-circle" cx="90" cy="90" r="76" />
+                        </svg>
+                        <div class="gauge-content">
+                            <span class="prob-num" id="prob-percentage">0.0%</span>
+                            <span class="prob-label">Supervivencia</span>
+                        </div>
+                    </div>
+
+                    <!-- Prediction Stamp Badge -->
+                    <div class="outcome-badge" id="outcome-badge">
+                        SOBREVIVE
+                    </div>
+
+                    <!-- Outcome text -->
+                    <div class="prediction-desc" id="prediction-desc">
+                        Cargando inferencia...
+                    </div>
+                </div>
+
+                <!-- Survivor Factor Meters (Real-time weight visual) -->
+                <div class="factor-meters">
+                    <h3>Fuerzas Predictivas (Pesos del Modelo)</h3>
+                    
+                    <!-- Gender Factor -->
+                    <div class="meter-group">
+                        <div class="meter-header">
+                            <span>Influencia de Género (Sex)</span>
+                            <strong id="factor-val-sex">0%</strong>
+                        </div>
+                        <div class="meter-bar-container">
+                            <div class="meter-bar-fill" id="factor-bar-sex"></div>
+                        </div>
+                    </div>
+
+                    <!-- Class Factor -->
+                    <div class="meter-group">
+                        <div class="meter-header">
+                            <span>Estatus de Clase (Pclass)</span>
+                            <strong id="factor-val-class">0%</strong>
+                        </div>
+                        <div class="meter-bar-container">
+                            <div class="meter-bar-fill" id="factor-bar-class"></div>
+                        </div>
+                    </div>
+
+                    <!-- Age Factor -->
+                    <div class="meter-group">
+                        <div class="meter-header">
+                            <span>Factor de Edad (Age)</span>
+                            <strong id="factor-val-age">0%</strong>
+                        </div>
+                        <div class="meter-bar-container">
+                            <div class="meter-bar-fill" id="factor-bar-age"></div>
+                        </div>
+                    </div>
+
+                    <!-- Family Factor -->
+                    <div class="meter-group">
+                        <div class="meter-header">
+                            <span>Estructura Familiar (SibSp/Parch)</span>
+                            <strong id="factor-val-family">0%</strong>
+                        </div>
+                        <div class="meter-bar-container">
+                            <div class="meter-bar-fill" id="factor-bar-family"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Back Button -->
+        <div style="text-align: center; margin-bottom: 32px;">
+            <a href="../index.html" class="btn btn-secondary">← Volver al Ciclo de Vida del Proyecto</a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>© 2026 Maestría en Inteligencia Artificial y Aprendizaje Automático — UFHEC</p>
+            <p>Materia: Aprendizaje Autónomo · Proyecto Titanic</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
