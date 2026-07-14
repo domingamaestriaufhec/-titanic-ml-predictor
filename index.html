@@ -3,287 +3,539 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titanic Survival Predictor — Simulador Inteligente</title>
-    <meta name="description" content="Simulador predictivo de supervivencia en el RMS Titanic utilizando Regresión Logística y visualización interactiva de cubiertas y factores de supervivencia.">
+    <title>Titanic AI — Landing Page & Ciclo de Vida CRISP-ML(Q)</title>
+    <meta name="description" content="Página de presentación del proyecto de predicción de supervivencia en el Titanic. Explica el ciclo de vida completo bajo la metodología CRISP-ML(Q).">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg-dark: #05070f;
+            --bg-card: rgba(13, 19, 41, 0.45);
+            --border-color: rgba(255, 255, 255, 0.05);
+            --border-glow: rgba(6, 182, 212, 0.2);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background Animated Orbs */
+        .bg-orbs {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.12;
+            animation: floatOrb 15s ease-in-out infinite alternate;
+        }
+
+        .orb-1 { width: 600px; height: 600px; background: var(--accent-cyan); top: -200px; left: -100px; }
+        .orb-2 { width: 500px; height: 500px; background: var(--accent-purple); bottom: -150px; right: -100px; animation-delay: -7s; }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, -60px) scale(1.08); }
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(5, 7, 15, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-symbol {
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-highlight { color: var(--accent-cyan); }
+        .header-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(6, 182, 212, 0.08);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: var(--accent-cyan);
+            padding: 6px 18px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: white;
+            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+
+        /* AR Section style */
+        .ar-section {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 48px;
+            align-items: center;
+            margin-bottom: 72px;
+        }
+
+        @media (max-width: 900px) {
+            .ar-section { grid-template-columns: 1fr; text-align: center; }
+        }
+
+        .ar-image-container {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1);
+        }
+
+        .ar-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .ar-image-container:hover .ar-image {
+            transform: scale(1.03);
+        }
+
+        .ar-content h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .ar-content p {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        /* CRISP-ML Pipeline Section */
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 72px;
+        }
+
+        .pipeline-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(16px);
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-5px);
+        }
+
+        .card-num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 40px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .pipeline-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .pipeline-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Access Links Table style */
+        .table-section {
+            margin-bottom: 48px;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .access-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            background: rgba(13, 19, 41, 0.3);
+            backdrop-filter: blur(16px);
+            font-size: 15px;
+        }
+
+        .access-table th, .access-table td {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .access-table th {
+            background: rgba(255, 255, 255, 0.02);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        .access-table tr:hover td {
+            background: rgba(6, 182, 212, 0.03);
+        }
+
+        .access-table a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+
+        .access-table a:hover {
+            color: var(--accent-purple);
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            padding: 32px 0;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+    </style>
 </head>
 <body>
-    <!-- Animated background orbs -->
     <div class="bg-orbs">
-        <div class="orb orb-purple"></div>
-        <div class="orb orb-cyan"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
     </div>
 
-    <!-- Header / Navbar -->
-    <header class="app-header">
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="nav-container">
-            <a href="../index.html" class="brand">
+            <a href="#" class="brand">
                 <span class="brand-symbol">◆</span>
                 <span class="brand-name">TITANIC <span class="brand-highlight">AI</span></span>
             </a>
-            <div class="header-badge">Maestría IA — UFHEC</div>
+            <div class="header-badge">Maestría en IA — UFHEC</div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Container -->
-    <main class="main-container">
-        <!-- Simulation Grid (3 Columns) -->
-        <section class="simulation-grid">
-            
-            <!-- Column 1: Inputs and Sliders -->
-            <div class="glass-card">
-                <div class="card-header">
-                    <h2><span class="header-icon">⚙</span> Parametrización</h2>
-                    <p>Ajusta el perfil del pasajero en tiempo real</p>
-                </div>
-                
-                <div class="form-grid">
-                    <!-- Sex Selection -->
-                    <div class="input-group">
-                        <label>Género (Sex)</label>
-                        <div class="radio-toggle">
-                            <input type="radio" id="sex-female" name="sex" value="0" checked>
-                            <label for="sex-female">Femenino</label>
-                            <input type="radio" id="sex-male" name="sex" value="1">
-                            <label for="sex-male">Masculino</label>
-                        </div>
-                    </div>
-
-                    <!-- Pclass Selection -->
-                    <div class="input-group">
-                        <label>Clase de Cabina (Pclass)</label>
-                        <div class="radio-toggle">
-                            <input type="radio" id="pclass-1" name="pclass" value="1">
-                            <label for="pclass-1">1ª Clase</label>
-                            <input type="radio" id="pclass-2" name="pclass" value="2">
-                            <label for="pclass-2">2ª</label>
-                            <input type="radio" id="pclass-3" name="pclass" value="3" checked>
-                            <label for="pclass-3">3ª</label>
-                        </div>
-                    </div>
-
-                    <!-- Age Slider -->
-                    <div class="input-group">
-                        <div class="slider-header">
-                            <label for="slider-age">Edad (Age)</label>
-                            <span class="value-display" id="val-age">25 años</span>
-                        </div>
-                        <input type="range" id="slider-age" min="0" max="80" value="25" class="slider">
-                    </div>
-
-                    <!-- Fare Slider -->
-                    <div class="input-group">
-                        <div class="slider-header">
-                            <label for="slider-fare">Precio del Boleto (Fare)</label>
-                            <span class="value-display" id="val-fare">£ 15.00</span>
-                        </div>
-                        <input type="range" id="slider-fare" min="0" max="512" step="0.5" value="15" class="slider">
-                    </div>
-
-                    <!-- SibSp Slider -->
-                    <div class="input-group">
-                        <div class="slider-header">
-                            <label for="slider-sibsp">Hermanos / Parejas (SibSp)</label>
-                            <span class="value-display" id="val-sibsp">0</span>
-                        </div>
-                        <input type="range" id="slider-sibsp" min="0" max="8" value="0" class="slider">
-                    </div>
-
-                    <!-- Parch Slider -->
-                    <div class="input-group">
-                        <div class="slider-header">
-                            <label for="slider-parch">Padres / Hijos (Parch)</label>
-                            <span class="value-display" id="val-parch">0</span>
-                        </div>
-                        <input type="range" id="slider-parch" min="0" max="6" value="0" class="slider">
-                    </div>
-
-                    <!-- Embarked Selection -->
-                    <div class="input-group">
-                        <label>Puerto de Embarque</label>
-                        <div class="radio-toggle">
-                            <input type="radio" id="emb-c" name="embarked" value="C">
-                            <label for="emb-c">Cherbourg</label>
-                            <input type="radio" id="emb-q" name="embarked" value="Q">
-                            <label for="emb-q">Queenstown</label>
-                            <input type="radio" id="emb-s" name="embarked" value="S" checked>
-                            <label for="emb-s">Southampton</label>
-                        </div>
-                    </div>
-                </div>
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-badge">Ciclo de Vida CRISP-ML(Q) completo</div>
+            <h1>Modelo de Predicción de Supervivencia<br><span class="gradient-text">RMS Titanic</span></h1>
+            <p>
+                Un proyecto de Machine Learning Supervisado de clasificación que evalúa la probabilidad de supervivencia en el naufragio de 1912.
+            </p>
+            <div class="hero-actions">
+                <a href="app/index.html" class="btn btn-primary">⚡ Abrir Simulador Web</a>
+                <a href="https://titanic-ml-predictor.streamlit.app" target="_blank" class="btn btn-secondary">🚀 Streamlit Dashboard</a>
+                <a href="https://colab.research.google.com/github/domingamaestriaufhec/titanic-ml-predictor/blob/main/Titanic%201/notebook.ipynb" target="_blank" class="btn btn-secondary" style="border-color: #8b5cf6; color: #a78bfa;">📓 Abrir en Google Colab</a>
             </div>
+        </section>
 
-            <!-- Column 2: Boarding Pass & Ship Deck Evacuation Visual -->
-            <div class="glass-card">
-                <div class="card-header">
-                    <h2><span class="header-icon">🎴</span> Pase de Abordaje</h2>
-                    <p>Visualización descriptiva del boleto e infraestructura</p>
-                </div>
-
-                <!-- Physical Boarding Pass style -->
-                <div class="boarding-pass">
-                    <div class="ticket-header">
-                        <span class="ticket-title">WHITE STAR LINE PASSENGER</span>
-                        <span class="value-display" style="font-size: 11px;">N° 349204</span>
-                    </div>
-                    <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 12px;">
-                        <div class="ticket-avatar" id="ticket-avatar">👨</div>
-                        <div class="ticket-item">
-                            <span>Pasajero Generado</span>
-                            <strong id="ticket-name">Adulto Masculino</strong>
-                        </div>
-                    </div>
-                    <div class="ticket-grid">
-                        <div class="ticket-item">
-                            <span>Clase</span>
-                            <strong id="ticket-class">3ª Clase</strong>
-                        </div>
-                        <div class="ticket-item">
-                            <span>Tarifa</span>
-                            <strong id="ticket-fare">£ 15.00</strong>
-                        </div>
-                        <div class="ticket-item">
-                            <span>Puerto</span>
-                            <strong id="ticket-embarked">Southampton</strong>
-                        </div>
-                        <div class="ticket-item">
-                            <span>Tamaño de Familia</span>
-                            <strong id="ticket-family">1 (Solo)</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ship Deck Map Visualizer -->
-                <div class="ship-visual">
-                    <div class="card-header" style="margin-bottom: 10px;">
-                        <h3 style="font-size: 13px; font-weight: 700;">Ubicación en las Cubiertas</h3>
-                    </div>
-                    <!-- Deck 1st -->
-                    <div class="ship-deck deck-first" id="deck-1">
-                        <div class="deck-info">
-                            <span class="deck-name">Cubierta Superior (1ª Clase)</span>
-                            <span class="deck-desc">Acceso directo a botes salvavidas</span>
-                        </div>
-                        <div class="deck-indicator"></div>
-                    </div>
-                    <!-- Deck 2nd -->
-                    <div class="ship-deck deck-second" id="deck-2">
-                        <div class="deck-info">
-                            <span class="deck-name">Cubierta Intermedia (2ª Clase)</span>
-                            <span class="deck-desc">Acceso moderado a botes</span>
-                        </div>
-                        <div class="deck-indicator"></div>
-                    </div>
-                    <!-- Deck 3rd -->
-                    <div class="ship-deck deck-third" id="deck-3">
-                        <div class="deck-info">
-                            <span class="deck-name">Cubierta Inferior (3ª Clase)</span>
-                            <span class="deck-desc">Compuertas y barreras de escape</span>
-                        </div>
-                        <div class="deck-indicator"></div>
-                    </div>
-                </div>
+        <!-- Augmented Reality Visual Section -->
+        <section class="ar-section">
+            <div class="ar-image-container">
+                <img src="ar_titanic_simulation.png" alt="Simulación en Realidad Aumentada del RMS Titanic" class="ar-image">
             </div>
+            <div class="ar-content">
+                <h2>Visualización Holográfica e Inteligencia Artificial</h2>
+                <p>
+                    Para maximizar el impacto visual de este proyecto predictivo, integramos una interfaz de simulación holográfica que representa el RMS Titanic en tres dimensiones dentro del espacio físico del usuario.
+                </p>
+                <p>
+                    A través de esta recreación, los docentes y estudiantes pueden manipular variables demográficas directamente sobre la estructura digital del buque, auditando las zonas de camarotes y botes salvavidas con predicciones probabilísticas proyectadas en tiempo real.
+                </p>
+                <a href="Documento_Titanic.docx" class="btn btn-secondary">📥 Descargar Reporte APA (.docx)</a>
+            </div>
+        </section>
 
-            <!-- Column 3: Gauge Predictor and Factor Meters -->
-            <div class="glass-card result-column">
-                <div class="card-header">
-                    <h2><span class="header-icon">✦</span> Inferencia ML</h2>
-                    <p>Ecuación logística evaluada en cliente</p>
+        <!-- CRISP-ML(Q) Section -->
+        <section>
+            <h2 class="section-title">Ciclo de Vida del Proyecto — CRISP-ML(Q)</h2>
+            <div class="pipeline-grid">
+                <!-- Step 1 -->
+                <div class="pipeline-card">
+                    <div class="card-num">01</div>
+                    <h3>Entendimiento del Negocio</h3>
+                    <p>Definición del problema histórico y planteamiento de objetivos SMART. Formulación de la pregunta orientada a predecir la supervivencia binaria en base al perfil demográfico.</p>
                 </div>
-
-                <div class="result-visualization">
-                    <!-- Circular Gauge -->
-                    <div class="gauge-container">
-                        <svg class="gauge" width="180" height="180" viewBox="0 0 180 180">
-                            <circle class="gauge-bg" cx="90" cy="90" r="76" />
-                            <circle class="gauge-fill" id="progress-circle" cx="90" cy="90" r="76" />
-                        </svg>
-                        <div class="gauge-content">
-                            <span class="prob-num" id="prob-percentage">0.0%</span>
-                            <span class="prob-label">Supervivencia</span>
-                        </div>
-                    </div>
-
-                    <!-- Prediction Stamp Badge -->
-                    <div class="outcome-badge" id="outcome-badge">
-                        SOBREVIVE
-                    </div>
-
-                    <!-- Outcome text -->
-                    <div class="prediction-desc" id="prediction-desc">
-                        Cargando inferencia...
-                    </div>
+                <!-- Step 2 -->
+                <div class="pipeline-card">
+                    <div class="card-num">02</div>
+                    <h3>Entendimiento de Datos</h3>
+                    <p>Análisis del manifiesto de 891 pasajeros (`titanic.csv`). Exploración estadística preliminar y detección de valores nulos críticos en edad, cabina y puerto de embarque.</p>
                 </div>
-
-                <!-- Survivor Factor Meters (Real-time weight visual) -->
-                <div class="factor-meters">
-                    <h3>Fuerzas Predictivas (Pesos del Modelo)</h3>
-                    
-                    <!-- Gender Factor -->
-                    <div class="meter-group">
-                        <div class="meter-header">
-                            <span>Influencia de Género (Sex)</span>
-                            <strong id="factor-val-sex">0%</strong>
-                        </div>
-                        <div class="meter-bar-container">
-                            <div class="meter-bar-fill" id="factor-bar-sex"></div>
-                        </div>
-                    </div>
-
-                    <!-- Class Factor -->
-                    <div class="meter-group">
-                        <div class="meter-header">
-                            <span>Estatus de Clase (Pclass)</span>
-                            <strong id="factor-val-class">0%</strong>
-                        </div>
-                        <div class="meter-bar-container">
-                            <div class="meter-bar-fill" id="factor-bar-class"></div>
-                        </div>
-                    </div>
-
-                    <!-- Age Factor -->
-                    <div class="meter-group">
-                        <div class="meter-header">
-                            <span>Factor de Edad (Age)</span>
-                            <strong id="factor-val-age">0%</strong>
-                        </div>
-                        <div class="meter-bar-container">
-                            <div class="meter-bar-fill" id="factor-bar-age"></div>
-                        </div>
-                    </div>
-
-                    <!-- Family Factor -->
-                    <div class="meter-group">
-                        <div class="meter-header">
-                            <span>Estructura Familiar (SibSp/Parch)</span>
-                            <strong id="factor-val-family">0%</strong>
-                        </div>
-                        <div class="meter-bar-container">
-                            <div class="meter-bar-fill" id="factor-bar-family"></div>
-                        </div>
-                    </div>
+                <!-- Step 3 -->
+                <div class="pipeline-card">
+                    <div class="card-num">03</div>
+                    <h3>Preparación de Datos (ETL)</h3>
+                    <p>Imputación inteligente de la edad según la mediana agrupada. Ingeniería de características (creación de `FamilySize` e `IsAlone`). Codificación One-Hot y escalamiento estándar de variables continuas.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="pipeline-card">
+                    <div class="card-num">04</div>
+                    <h3>Modelado</h3>
+                    <p>Entrenamiento simultáneo de 4 algoritmos de clasificación supervisada en Scikit-learn: Regresión Logística, Árbol de Decisión, KNN y Random Forest.</p>
+                </div>
+                <!-- Step 5 -->
+                <div class="pipeline-card">
+                    <div class="card-num">05</div>
+                    <h3>Evaluación</h3>
+                    <p>Validación de modelos sobre el 30% del conjunto de prueba. Extracción de métricas de precisión (Accuracy > 80%), curvas ROC e importancia de variables.</p>
+                </div>
+                <!-- Step 6 -->
+                <div class="pipeline-card">
+                    <div class="card-num">06</div>
+                    <h3>Despliegue y Monitoreo</h3>
+                    <p>Implementación del motor en JavaScript cliente dentro del simulador web local y despliegue del panel de control interactivo mediante Python Streamlit.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Back Button -->
-        <div style="text-align: center; margin-bottom: 32px;">
-            <a href="../index.html" class="btn btn-secondary">← Volver al Ciclo de Vida del Proyecto</a>
-        </div>
+        <!-- Access Table Section -->
+        <section class="table-section">
+            <h2 class="section-title">Matriz de Acceso a los Entregables</h2>
+            <div class="table-container">
+                <table class="access-table">
+                    <thead>
+                        <tr>
+                            <th>Entregable</th>
+                            <th>Ubicación / Link</th>
+                            <th>Formato</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Cuaderno de ML</strong></td>
+                            <td><a href="notebook.ipynb">notebook.ipynb</a></td>
+                            <td><span class="badge">Jupyter Notebook</span></td>
+                            <td>Pipeline completo de ETL, EDA y entrenamiento de los 4 clasificadores supervisados.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Simulador Web</strong></td>
+                            <td><a href="app/index.html">app/index.html</a></td>
+                            <td><span class="badge">HTML5 / CSS / JS</span></td>
+                            <td>Simulación interactiva con sliders e inferencia cliente en tiempo real.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dashboard Streamlit</strong></td>
+                            <td><a href="streamlit_app.py">streamlit_app.py</a></td>
+                            <td><span class="badge">Python App</span></td>
+                            <td>Panel analítico en Streamlit con gráficos interactivos y métricas comparativas.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Documento de Investigación</strong></td>
+                            <td><a href="Documento_Titanic.docx">Documento_Titanic.docx</a></td>
+                            <td><span class="badge">DOCX (APA 7)</span></td>
+                            <td>Reporte formal de la investigación con portada, DOFA y referencias en formato Word.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Reporte Markdown</strong></td>
+                            <td><a href="Documento_Titanic.md">Documento_Titanic.md</a></td>
+                            <td><span class="badge">Markdown</span></td>
+                            <td>Texto completo estructurado en formato Markdown.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Requerimientos de Sistema</strong></td>
+                            <td><a href="requirements.txt">requirements.txt</a></td>
+                            <td><span class="badge">TXT</span></td>
+                            <td>Dependencias de Python recomendadas para ejecutar el entorno local.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Repesitorio del Proyecto</strong></td>
+                            <td><a href="https://github.com/domingamaestriaufhec/titanic-ml-predictor" target="_blank">Ver Repositorio GitHub</a></td>
+                            <td><span class="badge">GitHub Repo</span></td>
+                            <td>Enlace representativo del repositorio Git del proyecto para control de cambios.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="app-footer">
-        <div class="footer-container">
-            <p>© 2026 Maestría en Inteligencia Artificial y Aprendizaje Automático — UFHEC</p>
-            <p>Materia: Aprendizaje Autónomo · Proyecto Titanic</p>
-        </div>
+    <footer class="footer">
+        <p>© 2026 Maestría en Inteligencia Artificial y Aprendizaje Automático — UFHEC</p>
+        <p>Materia: Aprendizaje Autónomo · Proyecto Titanic</p>
     </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>
